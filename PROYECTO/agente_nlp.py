@@ -1,22 +1,20 @@
 import os
 import json
-import google.generativeai as genai
+from google import genai
 from dotenv import load_dotenv
 
-#Caja fuerte y llave
+# 1. Ruta absoluta de la llave
+ruta_absoluta = os.path.join(os.path.dirname(__file__), '.env')
+load_dotenv(ruta_absoluta)
 
-load_dotenv()
+# 2. Conexión usando el SDK moderno de Google
 api_key = os.getenv("GEMINI_API_KEY")
-genai.configure(api_key=api_key)
+cliente = genai.Client(api_key=api_key)
 
 def procesar_texto_cliente(mensaje_cliente):
     """
-    Agente 1: Interpreta el lenguaje natural usando la API REST de Gemini
+    Agente 1: Interpreta el lenguaje natural del cliente y extrae las entidades.
     """
-    # Elegimos el modelo rápido de Gemini
-    modelo = genai.GenerativeModel('gemini-1.5-flash')
-
-    #El prompt: Instrucciones estrictas para la IA
     instrucciones = f"""
     Eres el Agente 1 de ventas del negocio "Aderezos Edu".
     Tu trabajo es leer el mensaje del cliente y extraer qué aderezos quiere comprar.
@@ -35,12 +33,14 @@ def procesar_texto_cliente(mensaje_cliente):
     Si no entiendes el pedido, devuelve un arreglo vacío: []
     """
 
-    #Solicitud Gemini
     try:
-        respuesta = modelo.generate_content(instrucciones)
+        # Llamada al modelo usando la nueva estructura
+        respuesta = cliente.models.generate_content(
+            model='gemini-2.0-flash',
+            contents=instrucciones
+        )
         texto_limpio = respuesta.text.strip()
-
-        # Limpiamos posibles formatos de código que la IA a veces añade
+        
         if texto_limpio.startswith("```json"):
             texto_limpio = texto_limpio[7:-3]
         elif texto_limpio.startswith("```"):
@@ -52,9 +52,8 @@ def procesar_texto_cliente(mensaje_cliente):
         print(f"Error al interpretar la respuesta de la IA: {e}")
         return []
 
-#  PRUEBA LOCAL 
+# --- PRUEBA LOCAL ---
 if __name__ == "__main__":
-    # Simulamos a un cliente escribiendo de forma natural
     texto_prueba = "Hola, me mandas porfa dos aderezos chicos (7oz) de habanero y un chipotle grandote de 725g. Gracias."
     
     print(f"Mensaje original: {texto_prueba}\n")
