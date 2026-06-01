@@ -62,5 +62,5 @@ if __name__ == "__main__":
     
     resultado_agente = procesar_texto_cliente(texto_prueba)
     
-    print("=== DATO ESTRUCTURADO PARA EL MOTOR DE INFERENCIA ===")
+    print(" DATO ESTRUCTURADO PARA EL MOTOR DE INFERENCIA ")
     print(resultado_agente)
