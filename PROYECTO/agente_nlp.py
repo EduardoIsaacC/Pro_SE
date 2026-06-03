@@ -36,7 +36,7 @@ def procesar_texto_cliente(mensaje_cliente):
     try:
         # Llamada al modelo usando la nueva estructura
         respuesta = cliente.models.generate_content(
-            model='gemini-2.0-flash',
+            model='gemini-2.0-flash',  # <--- Vuelve a poner el 2.0
             contents=instrucciones
         )
         texto_limpio = respuesta.text.strip()
@@ -52,7 +52,7 @@ def procesar_texto_cliente(mensaje_cliente):
         print(f"Error al interpretar la respuesta de la IA: {e}")
         return []
 
-# --- PRUEBA LOCAL ---
+# PRUEBA LOCAL
 if __name__ == "__main__":
     texto_prueba = "Hola, me mandas porfa dos aderezos chicos (7oz) de habanero y un chipotle grandote de 725g. Gracias."
     

@@ -33,7 +33,7 @@ def generar_explicacion(datos_del_pedido):
 
     try:
         respuesta = cliente.models.generate_content(
-            model='gemini-2.0-flash',
+            model='gemini-2.0-flash',  # <--- Vuelve a poner el 2.0
             contents=instrucciones
         )
         return respuesta.text

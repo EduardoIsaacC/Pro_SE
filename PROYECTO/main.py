@@ -7,9 +7,7 @@ def ejecutar_sistema_experto():
     """
     Funcion principal que orquesta la comunicacion entre los 3 agentes.
     """
-    print("\n" + "="*50)
     print( " SISTEMA EXPERTO DE ADEREZOS EDU INICIADO ")
-    print("="*50 + "\n")
 
     #Simulamos la entrada del usuario por consola
     mensaje_cliente = input(" Cliente ")
@@ -40,7 +38,6 @@ def ejecutar_sistema_experto():
     respuesta_final = generar_explicacion(reporte_sistema)
 
     #SALIDA FINAL
-
     print("\n" + "="*50)
     print(" RESPUESTA FINAL DEL ASISTENTE VIRTUAL")
     print("="*50)
@@ -48,12 +45,12 @@ def ejecutar_sistema_experto():
     print("="*50 + "\n")
 
     #BUCLE DE EJECUCION
-    if __name__ == "__main__":
-        while True:
-            ejecutar_sistema_experto()
+if __name__ == "__main__":
+    while True:
+        ejecutar_sistema_experto()
 
-            #Pregnutar si el usuario desea realizar otra prueba
-            continuar = input("¿Desea procesar otro pedido? (s/n): ").strip().lower()
-            if continuar != 's':
-                print("\nApagando Sistema Experto..... ¡HASTA PRONTO!")
-                break
+        #Pregnutar si el usuario desea realizar otra prueba
+        continuar = input("¿Desea procesar otro pedido? (s/n): ").strip().lower()
+        if continuar != 's':
+            print("\nApagando Sistema Experto..... ¡HASTA PRONTO!")
+            break
