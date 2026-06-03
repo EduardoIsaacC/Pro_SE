@@ -25,4 +25,35 @@ def ejecutar_sistema_experto():
         print(" Por favor intenta de nuevo especificando (ej. Chipotle 725g o Habanero 7oz.)")
         return
     
-    print(f"")
+    print(f"Datos extraídos con éxito: {pedido_estructurado}\n")
+    time.sleep(1) #Pausa para que se visualice el proceso
+
+    #MOTOR DE INFERENCIA (Base de datos y Matematicas)
+    print(" [Agente 2] Consultando inventario y aplicando reglas de negocio....")
+    reporte_sistema = evaluar_pedido(pedido_estructurado)
+
+    print(f" Calculo finalizado. Estado del ticket: {reporte_sistema['estado']}\n")
+    time.sleep(1)
+
+    #AGENTE EXPLICADOR (Redaccion justificada)
+    print(" [Agente 3] Redactando la explicacion transparante para el cliente.....")
+    respuesta_final = generar_explicacion(reporte_sistema)
+
+    #SALIDA FINAL
+
+    print("\n" + "="*50)
+    print(" RESPUESTA FINAL DEL ASISTENTE VIRTUAL")
+    print("="*50)
+    print(respuesta_final)
+    print("="*50 + "\n")
+
+    #BUCLE DE EJECUCION
+    if __name__ == "__main__":
+        while True:
+            ejecutar_sistema_experto()
+
+            #Pregnutar si el usuario desea realizar otra prueba
+            continuar = input("¿Desea procesar otro pedido? (s/n): ").strip().lower()
+            if continuar != 's':
+                print("\nApagando Sistema Experto..... ¡HASTA PRONTO!")
+                break
