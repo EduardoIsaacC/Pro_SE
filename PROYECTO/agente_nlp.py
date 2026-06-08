@@ -21,7 +21,12 @@ def procesar_texto_cliente(mensaje_cliente):
     
     Catálogo válido:
     Sabores: Chipotle, Habanero.
-    Tamaños: 725g, 10oz, 7oz.
+    Tamaños oficiales: 725g, 10oz, 7oz.
+    
+    Base de conocimiento para sinónimos:
+    - Si el cliente dice "chico" o "pequeño", el tamaño es "7oz".
+    - Si el cliente dice "mediano", el tamaño es "10oz".
+    - Si el cliente dice "grande" o "grandote", el tamaño es "725g".
     
     Mensaje del cliente: "{mensaje_cliente}"
     
@@ -34,32 +39,32 @@ def procesar_texto_cliente(mensaje_cliente):
     """
 
     try:
-        # Llamada al modelo usando la nueva estructura
+        # Llamada al modelo 
         respuesta = cliente.models.generate_content(
-            model='gemini-2.0-flash',  # <--- Vuelve a poner el 2.0
+            model='gemini-2.0-flash'
             contents=instrucciones
         )
-        texto_limpio = respuesta.text.strip()
         
-        if texto_limpio.startswith("```json"):
-            texto_limpio = texto_limpio[7:-3]
-        elif texto_limpio.startswith("```"):
-            texto_limpio = texto_limpio[3:-3]
-            
-        lista_articulos = json.loads(texto_limpio.strip())
+        # --- LIMPIEZA DE JSON A PRUEBA DE BALAS ---
+        texto_limpio = respuesta.text.strip()
+        # En lugar de rebanar, simplemente reemplazamos cualquier rastro de markdown por "nada"
+        texto_limpio = texto_limpio.replace("```json", "").replace("```", "").strip()
+        
+        lista_articulos = json.loads(texto_limpio)
         return lista_articulos
+        
     except Exception as e:
         print(f"Error al interpretar la respuesta de la IA: {e}")
         return []
 
 # PRUEBA LOCAL
 if __name__ == "__main__":
-    texto_prueba = "Hola, me mandas porfa dos aderezos chicos (7oz) de habanero y un chipotle grandote de 725g. Gracias."
+    texto_prueba = "Hola, me mandas porfa dos aderezos chicos de habanero y un chipotle grandote de 725g. Gracias."
     
     print(f"Mensaje original: {texto_prueba}\n")
     print("El Agente 1 está pensando...\n")
     
     resultado_agente = procesar_texto_cliente(texto_prueba)
     
-    print(" DATO ESTRUCTURADO PARA EL MOTOR DE INFERENCIA ")
+    print("  DATO ESTRUCTURADO PARA EL MOTOR DE INFERENCIA  ")
     print(resultado_agente)
