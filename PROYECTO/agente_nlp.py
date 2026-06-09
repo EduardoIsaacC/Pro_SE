@@ -1,5 +1,6 @@
 import os
 import json
+import time
 from google import genai
 from dotenv import load_dotenv
 
@@ -7,7 +8,7 @@ from dotenv import load_dotenv
 ruta_absoluta = os.path.join(os.path.dirname(__file__), '.env')
 load_dotenv(ruta_absoluta)
 
-# 2. Conexión usando el SDK moderno de Google
+# 2. Conexión usando el SDK moderno
 api_key = os.getenv("GEMINI_API_KEY")
 cliente = genai.Client(api_key=api_key)
 
@@ -38,24 +39,35 @@ def procesar_texto_cliente(mensaje_cliente):
     Si no entiendes el pedido, devuelve un arreglo vacío: []
     """
 
-    try:
-        # Llamada al modelo 
-        respuesta = cliente.models.generate_content(
-            model='gemini-2.0-flash'
-            contents=instrucciones
-        )
-        
-        # --- LIMPIEZA DE JSON A PRUEBA DE BALAS ---
-        texto_limpio = respuesta.text.strip()
-        # En lugar de rebanar, simplemente reemplazamos cualquier rastro de markdown por "nada"
-        texto_limpio = texto_limpio.replace("```json", "").replace("```", "").strip()
-        
-        lista_articulos = json.loads(texto_limpio)
-        return lista_articulos
-        
-    except Exception as e:
-        print(f"Error al interpretar la respuesta de la IA: {e}")
-        return []
+    intentos_maximos = 3
+    
+    for intento in range(intentos_maximos):
+        try:
+            # Llamada al modelo 2.5
+            respuesta = cliente.models.generate_content(
+                model='gemini-2.5-flash',
+                contents=instrucciones
+            )
+            
+            # Limpieza de texto a prueba de balas
+            texto_limpio = respuesta.text.strip().replace("```json", "").replace("```", "").strip()
+            lista_articulos = json.loads(texto_limpio)
+            return lista_articulos
+            
+        except Exception as e:
+            error_mensaje = str(e)
+            # Si el servidor está saturado (503), esperamos y reintentamos
+            if "503" in error_mensaje or "429" in error_mensaje:
+                if intento < intentos_maximos - 1:
+                    print(f" Agente 1 NLP ocupado (Intento {intento + 1}/{intentos_maximos}). Esperando 3 segundos...")
+                    time.sleep(3)
+                    continue
+            
+            # Si es un error distinto o ya intentó 3 veces, imprime el error en consola y aborta
+            print(f"Error fatal en NLP: {e}")
+            return []
+
+    return []
 
 # PRUEBA LOCAL
 if __name__ == "__main__":
@@ -66,5 +78,5 @@ if __name__ == "__main__":
     
     resultado_agente = procesar_texto_cliente(texto_prueba)
     
-    print("  DATO ESTRUCTURADO PARA EL MOTOR DE INFERENCIA  ")
+    print(" DATO ESTRUCTURADO PARA EL MOTOR DE INFERENCIA ")
     print(resultado_agente)
