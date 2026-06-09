@@ -49,7 +49,7 @@ class ClienteDiscord(discord.Client):
                 #Agente 2: Motor de Inferencia (SQLITE)
                 reporte_sistema = evaluar_pedido(pedido_estructurado)
 
-                await mensaje_espera.edit(content="⚙️ *Consultando inventario y aplicando reglas de negocio...*")
+                await mensaje_espera.edit(content=" *Consultando inventario y aplicando reglas de negocio...*")
                 await asyncio.sleep(5) #Segunda pausa tactica para dejar respirar a la API
 
                 #Agente 3: Explicador
